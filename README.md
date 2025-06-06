@@ -3,6 +3,7 @@
 
 
 ✨ Features
+
 🔧 Interactive Bit Playground
 
 Click-to-Toggle: Interactive bits that respond to clicks with smooth animations
