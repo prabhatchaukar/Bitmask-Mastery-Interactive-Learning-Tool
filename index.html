@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitmask Mastery - Interactive Learning Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Taurus, Geneva, Verdana, sans-serif;
+            background: black;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #4facfe;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .bit-display {
+            display: flex;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .bit {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+        }
+
+        .bit.active {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border-color: #ff6b6b;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .bit:hover {
+            transform: scale(1.05);
+            border-color: #4facfe;
+        }
+
+        .bit-labels {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .bit-label {
+            width: 50px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+            color: #333;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-display {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+
+        .operation-demo {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .demo-label {
+            text-align: center;
+            font-weight: bold;
+            color: #495057;
+            font-size: 1.1em;
+        }
+
+        .operator {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .example-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #4facfe;
+            transition: transform 0.3s ease;
+        }
+
+        .example-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .example-title {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #fdcb6e;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .operation-demo {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Bitmask Mastery</h1>
+            <p>Master the Art of Bitwise Operations with Interactive Learning</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Interactive Bit Manipulation -->
+            <div class="section">
+                <h2>🔧 Interactive Bit Playground</h2>
+                <p>Click on the bits below to toggle them ON/OFF and see the decimal value change in real-time!</p>
+                
+                <div class="bit-labels">
+                    <div class="bit-label">128</div>
+                    <div class="bit-label">64</div>
+                    <div class="bit-label">32</div>
+                    <div class="bit-label">16</div>
+                    <div class="bit-label">8</div>
+                    <div class="bit-label">4</div>
+                    <div class="bit-label">2</div>
+                    <div class="bit-label">1</div>
+                </div>
+                
+                <div class="bit-display" id="bitDisplay">
+                    <div class="bit" data-value="128">0</div>
+                    <div class="bit" data-value="64">0</div>
+                    <div class="bit" data-value="32">0</div>
+                    <div class="bit" data-value="16">0</div>
+                    <div class="bit" data-value="8">0</div>
+                    <div class="bit" data-value="4">0</div>
+                    <div class="bit" data-value="2">0</div>
+                    <div class="bit" data-value="1">0</div>
+                </div>
+                
+                <div class="result-display" id="decimalResult">
+                    Decimal Value: 0
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="setRandomBits()">🎲 Random Pattern</button>
+                    <button class="btn btn-secondary" onclick="clearAllBits()">🧹 Clear All</button>
+                    <button class="btn btn-success" onclick="setAllBits()">✨ Set All</button>
+                </div>
+            </div>
+
+            <!-- Bitmask Operations Demo -->
+            <div class="section">
+                <h2>⚡ Bitmask Operations</h2>
+                
+                <div class="operation-demo">
+                    <div>
+                        <div class="demo-label">Number A</div>
+                        <div class="bit-display" id="numberA">
+                            <div class="bit active">1</div>
+                            <div class="bit">0</div>
+                            <div class="bit active">1</div>
+                            <div class="bit">0</div>
+                            <div class="bit active">1</div>
+                            <div class="bit">0</div>
+                            <div class="bit active">1</div>
+                            <div class="bit">0</div>
+                        </div>
+                        <div class="result-display">170</div>
+                    </div>
+                    
+                    <div class="operator" id="operator">AND (&)</div>
+                    
+                    <div>
+                        <div class="demo-label">Number B</div>
+                        <div class="bit-display" id="numberB">
+                            <div class="bit active">1</div>
+                            <div class="bit active">1</div>
+                            <div class="bit">0</div>
+                            <div class="bit">0</div>
+                            <div class="bit active">1</div>
+                            <div class="bit active">1</div>
+                            <div class="bit">0</div>
+                            <div class="bit">0</div>
+                        </div>
+                        <div class="result-display">204</div>
+                    </div>
+                    
+                    <div class="operator">=</div>
+                    
+                    <div>
+                        <div class="demo-label">Result</div>
+                        <div class="bit-display" id="result">
+                            <div class="bit active">1</div>
+                            <div class="bit">0</div>
+                            <div class="bit">0</div>
+                            <div class="bit">0</div>
+                            <div class="bit active">1</div>
+                            <div class="bit">0</div>
+                            <div class="bit">0</div>
+                            <div class="bit">0</div>
+                        </div>
+                        <div class="result-display" id="operationResult">136</div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="setOperation('AND')">AND (&)</button>
+                    <button class="btn btn-primary" onclick="setOperation('OR')">OR (|)</button>
+                    <button class="btn btn-primary" onclick="setOperation('XOR')">XOR (^)</button>
+                    <button class="btn btn-secondary" onclick="generateNewNumbers()">🔄 New Numbers</button>
+                </div>
+            </div>
+
+            <!-- Real-world Examples -->
+            <div class="section">
+                <h2>🌟 Real-World Applications</h2>
+                
+                <div class="examples">
+                    <div class="example-card">
+                        <div class="example-title">🔐 Permission System</div>
+                        <p>Store multiple permissions in a single integer:</p>
+                        <div class="code-block">
+const READ = 1;    // 001
+const WRITE = 2;   // 010  
+const EXECUTE = 4; // 100
+
+// User has READ + WRITE
+let permissions = READ | WRITE; // 011 = 3
+
+// Check if user can read
+if (permissions & READ) {
+    console.log("Can read!");
+}</div>
+                    </div>
+                    
+                    <div class="example-card">
+                        <div class="example-title">🚩 Feature Flags</div>
+                        <p>Enable/disable features efficiently:</p>
+                        <div class="code-block">
+const DARK_MODE = 1;     // 0001
+const NOTIFICATIONS = 2; // 0010
+const PREMIUM = 4;       // 0100
+const BETA = 8;          // 1000
+
+let userFlags = DARK_MODE | PREMIUM; // 0101
+
+// Toggle notifications
+userFlags ^= NOTIFICATIONS; // XOR to flip bit</div>
+                    </div>
+                    
+                    <div class="example-card">
+                        <div class="example-title">🎮 Game Development</div>
+                        <p>Track game state and player abilities:</p>
+                        <div class="code-block">
+const CAN_JUMP = 1;
+const CAN_SWIM = 2;
+const CAN_FLY = 4;
+const HAS_KEY = 8;
+
+let playerAbilities = CAN_JUMP | CAN_SWIM; // 011
+
+// Player finds flying power-up
+playerAbilities |= CAN_FLY; // Now 111</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Concepts -->
+            <div class="section">
+                <h2>💡 Key Concepts to Remember</h2>
+                
+                <div class="highlight">
+                    <strong>🔹 AND (&):</strong> Both bits must be 1 → Result is 1<br>
+                    <strong>🔹 OR (|):</strong> At least one bit is 1 → Result is 1<br>
+                    <strong>🔹 XOR (^):</strong> Bits are different → Result is 1<br>
+                    <strong>🔹 NOT (~):</strong> Flips all bits (0→1, 1→0)
+                </div>
+                
+                <div class="highlight">
+                    <strong>🎯 Common Patterns:</strong><br>
+                    • Set bit: <code>number |= (1 << position)</code><br>
+                    • Clear bit: <code>number &= ~(1 << position)</code><br>
+                    • Toggle bit: <code>number ^= (1 << position)</code><br>
+                    • Check bit: <code>(number & (1 << position)) !== 0</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentValue = 0;
+        let numberAValue = 170; // 10101010
+        let numberBValue = 204; // 11001100
+        let currentOperation = 'AND';
+
+        // Interactive bit playground
+        function updateBitDisplay() {
+            const bits = document.querySelectorAll('#bitDisplay .bit');
+            let value = 0;
+            
+            bits.forEach((bit, index) => {
+                const bitValue = parseInt(bit.dataset.value);
+                if (bit.classList.contains('active')) {
+                    value += bitValue;
+                    bit.textContent = '1';
+                } else {
+                    bit.textContent = '0';
+                }
+            });
+            
+            currentValue = value;
+            document.getElementById('decimalResult').textContent = `Decimal Value: ${value}`;
+        }
+
+        // Add click listeners to bits
+        document.querySelectorAll('#bitDisplay .bit').forEach(bit => {
+            bit.addEventListener('click', function() {
+                this.classList.toggle('active');
+                updateBitDisplay();
+            });
+        });
+
+        function setRandomBits() {
+            const bits = document.querySelectorAll('#bitDisplay .bit');
+            bits.forEach(bit => {
+                bit.classList.remove('active');
+                if (Math.random() > 0.5) {
+                    bit.classList.add('active');
+                }
+            });
+            updateBitDisplay();
+        }
+
+        function clearAllBits() {
+            document.querySelectorAll('#bitDisplay .bit').forEach(bit => {
+                bit.classList.remove('active');
+            });
+            updateBitDisplay();
+        }
+
+        function setAllBits() {
+            document.querySelectorAll('#bitDisplay .bit').forEach(bit => {
+                bit.classList.add('active');
+            });
+            updateBitDisplay();
+        }
+
+        // Bitmask operations
+        function updateOperationDisplay() {
+            let result;
+            switch(currentOperation) {
+                case 'AND':
+                    result = numberAValue & numberBValue;
+                    break;
+                case 'OR':
+                    result = numberAValue | numberBValue;
+                    break;
+                case 'XOR':
+                    result = numberAValue ^ numberBValue;
+                    break;
+            }
+            
+            updateBitsDisplay('result', result);
+            document.getElementById('operationResult').textContent = result;
+            document.getElementById('operator').textContent = `${currentOperation} (${getOperatorSymbol()})`;
+        }
+
+        function getOperatorSymbol() {
+            switch(currentOperation) {
+                case 'AND': return '&';
+                case 'OR': return '|';
+                case 'XOR': return '^';
+            }
+        }
+
+        function updateBitsDisplay(elementId, value) {
+            const container = document.getElementById(elementId);
+            const bits = container.querySelectorAll('.bit');
+            
+            bits.forEach((bit, index) => {
+                const bitPosition = 7 - index;
+                const isSet = (value & (1 << bitPosition)) !== 0;
+                
+                if (isSet) {
+                    bit.classList.add('active');
+                    bit.textContent = '1';
+                } else {
+                    bit.classList.remove('active');
+                    bit.textContent = '0';
+                }
+            });
+        }
+
+        function setOperation(operation) {
+            currentOperation = operation;
+            updateOperationDisplay();
+            
+            // Add pulse effect to result
+            const result = document.getElementById('result');
+            result.classList.add('pulse');
+            setTimeout(() => result.classList.remove('pulse'), 2000);
+        }
+
+        function generateNewNumbers() {
+            numberAValue = Math.floor(Math.random() * 256);
+            numberBValue = Math.floor(Math.random() * 256);
+            
+            updateBitsDisplay('numberA', numberAValue);
+            updateBitsDisplay('numberB', numberBValue);
+            
+            // Update decimal displays
+            document.querySelector('#numberA + .result-display').textContent = numberAValue;
+            document.querySelector('#numberB + .result-display').textContent = numberBValue;
+            
+            updateOperationDisplay();
+        }
+
+        // Initialize displays
+        updateBitDisplay();
+        updateBitsDisplay('numberA', numberAValue);
+        updateBitsDisplay('numberB', numberBValue);
+        updateOperationDisplay();
+    </script>
+</body>
+</html>
